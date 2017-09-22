@@ -26,6 +26,7 @@ struct GraphLink
 	Vector<String> sources_;
 	Vector<String> targets_;
 
+	//TODO: this should be initialize to the identity
 	void(*function_)(const VariantVector& inputs, VariantVector& outputs);
 };
 
