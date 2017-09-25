@@ -5,6 +5,7 @@
 #include "IO/File.h"
 #include "IO/FileSystem.h"
 
+#include <functional>
 
 using namespace Urho3D;
 
@@ -18,6 +19,44 @@ void Init()
 	ctx->RegisterSubsystem(fs);
 }
 
+
+
+/// Template implementation of the event handler invoke helper (std::function instance).
+class GraphFunction : public RefCounted
+{
+public:
+
+	/// Construct with receiver and function pointers and userdata.
+	GraphFunction(std::function<void(const VariantVector& inputs, VariantVector& outputs)> function, void* userData = 0) :
+		RefCounted(),
+		function_(function),
+		userData_(userData)
+	{
+		assert(function_);
+	}
+
+	/// Invoke event handler function.
+	virtual void Invoke(const VariantVector& inputs, VariantVector& outputs)
+	{
+		function_(inputs, outputs);
+	}
+
+	/// Return a unique copy of the event handler.
+	virtual GraphFunction* Clone() const
+	{
+		return new GraphFunction(function_, userData_);
+	}
+
+private:
+	/// Class-specific pointer to handler function.
+	std::function<void(const VariantVector& inputs, VariantVector& outputs)> function_;
+	///container for user data
+	void* userData_;
+};
+
+
+
+
 //a link is hyper edge with a function
 struct GraphLink
 {
@@ -25,9 +64,6 @@ struct GraphLink
 
 	Vector<String> sources_;
 	Vector<String> targets_;
-
-	//TODO: this should be initialize to the identity
-	void(*function_)(const VariantVector& inputs, VariantVector& outputs);
 };
 
 //graph def
@@ -49,39 +85,7 @@ public:
 
 	void Solve()
 	{
-		//for now, forget about ordering the solve
-		HashMap<String, GraphLink>::ConstIterator itr;
-		for (itr = graphLinks_.Begin(); itr != graphLinks_.End(); itr++)
-		{
-			//collect the inputs
-			VariantVector inputs;
-			for (int i = 0; i < itr->second_.sources_.Size(); i++)
-			{
-				Variant currentInput = graphValues_[itr->second_.sources_[i]];
-				inputs.Push(currentInput);
-			}
 
-			//collect the outputs
-			VariantVector outputs;
-			for (int i = 0; i < itr->second_.targets_.Size(); i++)
-			{
-				Variant targetOutput = graphValues_[itr->second_.targets_[i]];
-				outputs.Push(targetOutput);
-			}
-
-			//call the work functions
-			itr->second_.function_(inputs, outputs);
-
-			//propagate the results
-			int size = Min(itr->second_.targets_.Size(), outputs.Size());
-			for (int i = 0; i < size; i++)
-			{
-				Variant targetOutput = outputs[i];
-				graphValues_[itr->second_.targets_[i]] = targetOutput;				
-			}
-
-			//done?
-		}
 	}
 
 };
@@ -98,6 +102,24 @@ void Adder(const VariantVector& in, VariantVector& out)
 	out[0] = a;
 }
 
+class MyClassA
+{
+public:
+	MyClassA() {};
+
+	//special signature function
+	void Multiplier(const VariantVector& in, VariantVector& out)
+	{
+		float a = 1.0;
+		for (int i = 0; i < in.Size(); i++)
+		{
+			a += in[i].GetFloat();
+		}
+
+		out[0] = a;
+	}
+};
+
 TEST(Base, Graph)
 {
 	if (!ctx) {
@@ -105,23 +127,9 @@ TEST(Base, Graph)
 	}
 
 	GraphEngine* ge = new GraphEngine(ctx);
+	MyClassA mca;
 
-	//add some values
-	ge->AddValue("A", 1.0f);
-	ge->AddValue("B", 2.0f);
-	ge->AddValue("C", 0.0f);
+	//gf.Invoke(
 
-	//add a link
-	GraphLink gl;
-	gl.sources_.Push("A");
-	gl.sources_.Push("B");
-	gl.targets_.Push("C");
-	gl.function_ = Adder;
-	ge->graphLinks_["AdderLink"] = gl;
 
-	//solve
-	ge->Solve();
-
-	float result = ge->graphValues_["C"].GetFloat();
-	EXPECT_EQ(result, 3.0f);
 }
