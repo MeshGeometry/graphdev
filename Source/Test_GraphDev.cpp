@@ -68,7 +68,7 @@ struct GraphLink
 };
 
 //graph def
-class GraphEngine : public Object
+class  GraphEngine : public Object
 {
 	URHO3D_OBJECT(GraphEngine, Object);
 
@@ -122,6 +122,8 @@ public:
 		out[0] = a;
 	}
 };
+/// Convenience macro to construct an EventHandler that points to a receiver object and its member function.
+#define CREATE_GRAPH_FUNCTION(function, instance)(new GraphFunction(std::bind(&function, &instance, std::placeholders::_1, std::placeholders::_2)));
 
 TEST(Base, Graph)
 {
@@ -134,8 +136,9 @@ TEST(Base, Graph)
 
 	GraphEngine* ge = new GraphEngine(ctx);
 	MyClassA mca;
-	auto fp = std::bind(&MyClassA::Multiplier, &mca, std::placeholders::_1, std::placeholders::_2);
-	GraphFunction* gf = new GraphFunction(fp);
+	//auto fp = std::bind(&MyClassA::Multiplier, &mca, std::placeholders::_1, std::placeholders::_2);
+	GraphFunction* gf = CREATE_GRAPH_FUNCTION(MyClassA::Multiplier, mca);
+
 	gf->Invoke(in, out);
 
 
