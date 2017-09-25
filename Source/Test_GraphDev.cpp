@@ -25,9 +25,10 @@ void Init()
 class GraphFunction : public RefCounted
 {
 public:
+	typedef typename std::function<void(const VariantVector& inputs, VariantVector& outputs)> GraphFunctionType;
 
 	/// Construct with receiver and function pointers and userdata.
-	GraphFunction(std::function<void(const VariantVector& inputs, VariantVector& outputs)> function, void* userData = 0) :
+	GraphFunction(GraphFunctionType function, void* userData = 0) :
 		RefCounted(),
 		function_(function),
 		userData_(userData)
@@ -105,7 +106,9 @@ void Adder(const VariantVector& in, VariantVector& out)
 class MyClassA
 {
 public:
-	MyClassA() {};
+	MyClassA() 
+	{
+	};
 
 	//special signature function
 	void Multiplier(const VariantVector& in, VariantVector& out)
@@ -126,10 +129,14 @@ TEST(Base, Graph)
 		Init();
 	}
 
+	VariantVector in;
+	VariantVector out;
+
 	GraphEngine* ge = new GraphEngine(ctx);
 	MyClassA mca;
-
-	//gf.Invoke(
+	auto fp = std::bind(&MyClassA::Multiplier, &mca, std::placeholders::_1, std::placeholders::_2);
+	GraphFunction* gf = new GraphFunction(fp);
+	gf->Invoke(in, out);
 
 
 }
