@@ -1,3 +1,4 @@
+#pragma once
 #include "Core/Context.h"
 #include "Core/Object.h"
 

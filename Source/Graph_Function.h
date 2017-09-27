@@ -1,15 +1,16 @@
+#pragma once
 #include "Core/Context.h"
 #include "Core/Object.h"
 #include <functional>
 
 /// Template implementation of the event handler invoke helper (std::function instance).
-class GraphFunction : public Urho3D::RefCounted
+class Graph_Function : public Urho3D::RefCounted
 {
 public:
-	typedef typename std::function<void(const Urho3D::VariantVector& inputs, Urho3D::VariantVector& outputs)> GraphFunctionType;
+	typedef typename std::function<void(const Urho3D::VariantVector& inputs, Urho3D::VariantVector& outputs)> Graph_FunctionType;
 
 	/// Construct with receiver and function pointers and userdata.
-	GraphFunction(GraphFunctionType function, int numInputs, int numOutputs, bool modifiable, void* userData = 0) :
+	Graph_Function(Graph_FunctionType function, int numInputs, int numOutputs, bool modifiable, void* userData = 0) :
 		RefCounted(),
 		function_(function),
 		userData_(userData),
@@ -27,9 +28,9 @@ public:
 	}
 
 	/// Return a unique copy of the event handler.
-	virtual GraphFunction* Clone() const
+	virtual Graph_Function* Clone() const
 	{
-		return new GraphFunction(function_, numInputs_, numOutputs_, isModifiable_, userData_);
+		return new Graph_Function(function_, numInputs_, numOutputs_, isModifiable_, userData_);
 	}
 
 private:
@@ -44,4 +45,4 @@ private:
 };
 
 /// Convenience macro to construct an EventHandler that points to a receiver object and its member function.
-#define CREATE_GRAPH_FUNCTION(function, instance, numInputs, numOutputs)(new GraphFunction(std::bind(&function, &instance, std::placeholders::_1, std::placeholders::_2), numInputs, numOutputs, false));
+#define CREATE_GRAPH_FUNCTION(function, instance, numInputs, numOutputs)(new Graph_Function(std::bind(&function, &instance, std::placeholders::_1, std::placeholders::_2), numInputs, numOutputs, false));
