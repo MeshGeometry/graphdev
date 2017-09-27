@@ -13,27 +13,32 @@ void Graph_Engine::Solve()
 
 		//create inputs
 		VariantVector in;
-		for (int j = 0; j < link.sources_.Size(); j++)
+		in.Resize(link.function_->GetNumInputs());
+		int counter = Min(link.function_->GetNumInputs(), link.sources_.Size());
+		for (int j = 0; j < counter; j++)
 		{
 			Variant value;
 			graphData_.TryGetValue(link.sources_[j], value);
-			in.Push(value);
+			in[j] =value;
 		}
 
 		//create outputs
-		//not sure about this: do we need the value?
+		//not sure about this: do we need the values?
 		VariantVector out;
-		for (int j = 0; j < link.targets_.Size(); j++)
+		out.Resize(link.function_->GetNumOutputs());
+		counter = Min(link.function_->GetNumOutputs(), link.targets_.Size());
+		for (int j = 0; j < counter; j++)
 		{
 			Variant value;
 			graphData_.TryGetValue(link.targets_[j], value);
-			out.Push(value);
+			out[j] = value;
 		}
 
 		//call the function
 		link.function_->Invoke(in, out);
 
 		//set the output data
+		//this copies the data. Probably not optimal
 		for (int j = 0; j < link.targets_.Size(); j++)
 		{
 			graphData_[link.targets_[j]] = out[j];
