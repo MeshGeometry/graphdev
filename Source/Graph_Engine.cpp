@@ -42,3 +42,8 @@ void Graph_Engine::Solve()
 		//done?
 	}
 }
+
+void Graph_Engine::GetData(String name, Variant& value)
+{
+	graphData_.TryGetValue(name, value);
+}

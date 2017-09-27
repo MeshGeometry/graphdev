@@ -61,6 +61,8 @@ public:
 		graphData_[name] = value;
 	}
 
+	void GetData(String name, Variant& value);
+
 private:
 
 	Urho3D::Vector<Graph_Function*> graphFunctions_;

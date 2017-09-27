@@ -55,4 +55,11 @@ TEST(Base, Graph)
 
 	//solve
 	ge->Solve();
+
+	//verify
+	Variant value;
+	ge->GetData("C", value);
+	float res = value.GetFloat();
+	EXPECT_EQ(res, 3.0f);
+
 }
