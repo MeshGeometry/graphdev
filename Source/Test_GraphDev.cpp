@@ -32,7 +32,7 @@ TEST(Base, Graph)
 
 	//required graph systems
 	Graph_Engine* ge = new Graph_Engine(ctx);
-	Graph_Datastore* ds = new Graph_Datastore(ctx);
+	//Graph_Datastore* ds = new Graph_Datastore(ctx);
 	
 	//additional system
 	Math_System* ms = new Math_System(ctx);
