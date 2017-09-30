@@ -1,7 +1,26 @@
 #include "Graph_Engine.h"
+#include <functional>
 
 using namespace Urho3D;
 
+bool Graph_Engine::RegisterFunction(String name, Graph_Function* function)
+{
+	assert(function);
+
+	graphsFunctions_[name] = function;
+
+	return true;
+}
+
+void Graph_Engine::AddLink(Graph_Link link)
+{
+	graphLinks_.Push(link);
+}
+
+void Graph_Engine::AddData(String name, Variant value)
+{
+	graphData_[name] = value;
+}
 
 void Graph_Engine::Solve()
 {

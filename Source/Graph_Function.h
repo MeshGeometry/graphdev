@@ -3,10 +3,22 @@
 #include "Core/Object.h"
 #include <functional>
 
+typedef typename std::function<void(const Urho3D::VariantVector& inputs, Urho3D::VariantVector& outputs)> Graph_FunctionType;
+
 class Graph_Function : public Urho3D::RefCounted
 {
 public:
-	typedef typename std::function<void(const Urho3D::VariantVector& inputs, Urho3D::VariantVector& outputs)> Graph_FunctionType;
+
+	Graph_Function() :
+		RefCounted(),
+		function_(0),
+		userData_(0),
+		numInputs_(0),
+		numOutputs_(0),
+		isModifiable_(false)
+	{
+
+	}
 
 	Graph_Function(Graph_FunctionType function, int numInputs, int numOutputs, bool modifiable, void* userData = 0) :
 		RefCounted(),
@@ -35,8 +47,10 @@ public:
 private:
 	/// Class-specific pointer to handler function.
 	std::function<void(const Urho3D::VariantVector& inputs, Urho3D::VariantVector& outputs)> function_;
+
 	///container for user data
 	void* userData_;
+
 	///some stuff
 	int numInputs_;
 	int numOutputs_;

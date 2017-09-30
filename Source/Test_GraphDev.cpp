@@ -40,8 +40,8 @@ TEST(Base, Graph)
 	//register some functions
 	Graph_Function* add = CREATE_GRAPH_FUNCTION(Math_System::Add, *ms, 2, 1);
 	Graph_Function* mult = CREATE_GRAPH_FUNCTION(Math_System::Multiply, *ms, 2, 1);
-	ge->AddFunction(add);
-	ge->AddFunction(mult);
+	ge->RegisterFunction("Add", add);
+	ge->RegisterFunction("Multiply", mult);
 
 	//add some data fields
 	ge->AddData("A", 1.0f);
