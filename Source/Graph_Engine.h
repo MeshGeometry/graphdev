@@ -58,8 +58,8 @@ public:
 
 private:
 
-	Urho3D::HashMap<String, Graph_Function*> graphsFunctions_;
+	Urho3D::HashMap<String, Graph_Function*> graphFunctions_;
 	Urho3D::Vector<Graph_Link> graphLinks_;
-	Urho3D::HashMap<String, Variant> graphData_;
+	Urho3D::VariantMap graphData_;
 
 };

@@ -7,7 +7,7 @@ bool Graph_Engine::RegisterFunction(String name, Graph_Function* function)
 {
 	assert(function);
 
-	graphsFunctions_[name] = function;
+	graphFunctions_[name] = function;
 
 	return true;
 }
