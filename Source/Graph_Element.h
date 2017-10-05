@@ -22,6 +22,7 @@ using Urho3D::String;
 //All that is omitted here.
 class Graph_Element : public Urho3D::Object
 {
+	URHO3D_OBJECT(Graph_Element, Urho3D::Object);
 public:
 	Graph_Element(Urho3D::Context* context) : Object(context) {};
 	~Graph_Element() {};
@@ -30,6 +31,7 @@ public:
 //a slider class (ignoring any actual ui code).
 class MySlider : public Graph_Element
 {
+	URHO3D_OBJECT(MySlider, Graph_Element);
 public:
 	MySlider(Urho3D::Context* context) : Graph_Element(context),
 		myValue_(0.0f)
@@ -38,10 +40,10 @@ public:
 
 	~MySlider() {};
 	
-	void SetValue(float value)
+	void SetValue(const VariantVector& in, VariantVector& out)
 	{
 		//In actual use, this would set the position of a screen element or something.
-		myValue_ = value;
+		out[0] = myValue_;
 
 		//update the data field by event
 		VariantMap data;
@@ -57,6 +59,8 @@ private:
 //A plot (as in F(x)) class. Here, the class renders something on screen AND has a function that is bound to the engine.
 class MyPlot : public Graph_Element
 {
+	URHO3D_OBJECT(MyPlot, Graph_Element);
+
 public:
 	MyPlot(Urho3D::Context* context) : Graph_Element(context),
 		power_(2.0f)
